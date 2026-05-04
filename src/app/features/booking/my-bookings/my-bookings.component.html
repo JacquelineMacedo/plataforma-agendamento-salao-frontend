@@ -1,0 +1,142 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header flex-between">
+    <div>
+      <h2>Meus Agendamentos</h2>
+      <p>Acompanhe todos os seus agendamentos no salão</p>
+    </div>
+    <a mat-flat-button color="primary" routerLink="/bookings/new">
+      <mat-icon>add</mat-icon>
+      Novo Agendamento
+    </a>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:64px;">
+      <mat-spinner diameter="48" color="primary" />
+      <p style="color:#757575">Carregando agendamentos...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @else if (error()) {
+    <mat-card style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:40px;text-align:center;">
+      <mat-icon color="warn" style="font-size:48px;width:48px;height:48px;">warning</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button color="primary" (click)="loadBookings()">Tentar novamente</button>
+    </mat-card>
+  }
+
+  <!-- Empty state -->
+  @else if (bookings().length === 0) {
+    <mat-card class="empty-state-card">
+      <mat-icon class="empty-icon">event_busy</mat-icon>
+      <h3>Nenhum agendamento encontrado</h3>
+      <p>Você ainda não fez nenhum agendamento. Que tal começar agora?</p>
+      <a mat-flat-button color="primary" routerLink="/bookings/new">
+        <mat-icon>add_circle</mat-icon>
+        Fazer meu primeiro agendamento
+      </a>
+    </mat-card>
+  }
+
+  <!-- Content -->
+  @else {
+
+    <!-- Upcoming -->
+    @if (upcoming().length > 0) {
+      <section class="bookings-section">
+        <div class="section-title upcoming">
+          <mat-icon>upcoming</mat-icon>
+          <h3>Próximos ({{ upcoming().length }})</h3>
+        </div>
+
+        <div class="bookings-list">
+          @for (booking of upcoming(); track booking.id) {
+            <mat-card class="booking-item upcoming-item">
+              <div class="booking-date-col">
+                <span class="booking-day">
+                  {{ (booking.startTimeUtc | date:'dd') }}
+                </span>
+                <span class="booking-month">
+                  {{ (booking.startTimeUtc | date:'MMM':'':'pt-BR') }}
+                </span>
+                <span class="booking-time">
+                  {{ (booking.startTimeUtc | date:'HH:mm') }}
+                </span>
+              </div>
+
+              <div class="booking-info">
+                <div class="booking-top">
+                  <span class="booking-id">ID: {{ booking.id.substring(0, 8) }}...</span>
+                  <span class="status-badge" [class]="statusClass(booking.status)">
+                    {{ statusLabel(booking.status) }}
+                  </span>
+                </div>
+
+                @if (booking.notes) {
+                  <p class="booking-notes">
+                    <mat-icon>notes</mat-icon>
+                    {{ booking.notes }}
+                  </p>
+                }
+
+                <p class="booking-full-date">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ formatDate(booking.startTimeUtc) }}
+                </p>
+              </div>
+            </mat-card>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Past / Cancelled -->
+    @if (past().length > 0) {
+      <section class="bookings-section">
+        <div class="section-title past">
+          <mat-icon>history</mat-icon>
+          <h3>Histórico ({{ past().length }})</h3>
+        </div>
+
+        <div class="bookings-list past-list">
+          @for (booking of past(); track booking.id) {
+            <mat-card class="booking-item past-item">
+              <div class="booking-date-col faded">
+                <span class="booking-day">{{ (booking.startTimeUtc | date:'dd') }}</span>
+                <span class="booking-month">{{ (booking.startTimeUtc | date:'MMM':'':'pt-BR') }}</span>
+                <span class="booking-time">{{ (booking.startTimeUtc | date:'HH:mm') }}</span>
+              </div>
+
+              <div class="booking-info">
+                <div class="booking-top">
+                  <span class="booking-id">ID: {{ booking.id.substring(0, 8) }}...</span>
+                  <span class="status-badge" [class]="statusClass(booking.status)">
+                    {{ statusLabel(booking.status) }}
+                  </span>
+                </div>
+
+                @if (booking.notes) {
+                  <p class="booking-notes">
+                    <mat-icon>notes</mat-icon>
+                    {{ booking.notes }}
+                  </p>
+                }
+
+                <p class="booking-full-date">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ formatDateShort(booking.startTimeUtc) }}
+                </p>
+              </div>
+            </mat-card>
+          }
+        </div>
+      </section>
+    }
+
+  }
+
+</div>

@@ -1,0 +1,102 @@
+<mat-toolbar class="navbar-toolbar">
+  <!-- Logo / Brand -->
+  <a routerLink="/dashboard" class="brand-link">
+    <mat-icon class="brand-icon">spa</mat-icon>
+    <span class="brand-name">Salão Premium</span>
+  </a>
+
+  <span class="spacer"></span>
+
+  <!-- Desktop Navigation Links -->
+  <nav class="nav-links desktop-nav">
+    <a mat-button routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>dashboard</mat-icon>
+      Dashboard
+    </a>
+
+    <a mat-button routerLink="/bookings/my" routerLinkActive="active-link">
+      <mat-icon>event_note</mat-icon>
+      Meus Agendamentos
+    </a>
+
+    <a mat-button routerLink="/bookings/new" routerLinkActive="active-link">
+      <mat-icon>add_circle_outline</mat-icon>
+      Novo Agendamento
+    </a>
+
+    <!-- Admin menu -->
+    @if (isAdmin()) {
+      <button mat-button [matMenuTriggerFor]="adminMenu" class="admin-menu-btn">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Admin
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #adminMenu="matMenu">
+        <a mat-menu-item routerLink="/admin/services">
+          <mat-icon>content_cut</mat-icon>
+          <span>Serviços</span>
+        </a>
+        <a mat-menu-item routerLink="/admin/professionals">
+          <mat-icon>people</mat-icon>
+          <span>Profissionais</span>
+        </a>
+      </mat-menu>
+    }
+  </nav>
+
+  <!-- User menu -->
+  <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
+    <mat-icon>account_circle</mat-icon>
+    <span class="user-name">{{ firstName() }}</span>
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+
+  <mat-menu #userMenu="matMenu">
+    <div class="user-menu-header">
+      <p class="user-full-name">{{ currentUser()?.fullName }}</p>
+      <p class="user-email">{{ currentUser()?.email }}</p>
+      <span class="role-chip">{{ currentUser()?.role }}</span>
+    </div>
+    <mat-divider />
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Sair</span>
+    </button>
+  </mat-menu>
+
+  <!-- Mobile menu -->
+  <button mat-icon-button [matMenuTriggerFor]="mobileMenu" class="mobile-menu-btn">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <mat-menu #mobileMenu="matMenu">
+    <a mat-menu-item routerLink="/dashboard">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+    <a mat-menu-item routerLink="/bookings/my">
+      <mat-icon>event_note</mat-icon>
+      <span>Meus Agendamentos</span>
+    </a>
+    <a mat-menu-item routerLink="/bookings/new">
+      <mat-icon>add_circle_outline</mat-icon>
+      <span>Novo Agendamento</span>
+    </a>
+    @if (isAdmin()) {
+      <mat-divider />
+      <a mat-menu-item routerLink="/admin/services">
+        <mat-icon>content_cut</mat-icon>
+        <span>Serviços (Admin)</span>
+      </a>
+      <a mat-menu-item routerLink="/admin/professionals">
+        <mat-icon>people</mat-icon>
+        <span>Profissionais (Admin)</span>
+      </a>
+    }
+    <mat-divider />
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Sair</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

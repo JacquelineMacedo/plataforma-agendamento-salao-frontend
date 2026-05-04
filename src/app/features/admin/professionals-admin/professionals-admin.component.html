@@ -1,0 +1,141 @@
+<div class="page-container admin-section">
+
+  <!-- Header -->
+  <div class="section-header">
+    <div>
+      <h2>
+        <mat-icon>people</mat-icon>
+        Gestão de Profissionais
+      </h2>
+      <p>Gerencie a equipe de profissionais do salão</p>
+    </div>
+    <div class="header-actions">
+      <a mat-stroked-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon>
+        Dashboard
+      </a>
+      <button mat-flat-button color="primary" (click)="toggleForm()">
+        <mat-icon>{{ showForm() ? 'close' : 'person_add' }}</mat-icon>
+        {{ showForm() ? 'Cancelar' : 'Novo Profissional' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- New Professional Form -->
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>person_add</mat-icon>
+        <mat-card-title>Novo Profissional</mat-card-title>
+        <mat-card-subtitle>Cadastre um novo membro da equipe</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="pro-form">
+
+          <div class="form-row-2">
+            <mat-form-field appearance="outline">
+              <mat-label>Nome completo</mat-label>
+              <input matInput formControlName="fullName" placeholder="Ex: Ana Paula Santos">
+              <mat-icon matPrefix>person</mat-icon>
+              @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+                <mat-error>Nome obrigatório (mínimo 3 caracteres)</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>E-mail</mat-label>
+              <input matInput type="email" formControlName="email" placeholder="profissional@salao.com">
+              <mat-icon matPrefix>email</mat-icon>
+              @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                <mat-error>
+                  @if (form.get('email')?.errors?.['required']) { E-mail obrigatório }
+                  @else if (form.get('email')?.errors?.['email']) { E-mail inválido }
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="toggle-field">
+            <mat-slide-toggle formControlName="active" color="primary">
+              Profissional ativo
+            </mat-slide-toggle>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="toggleForm()">Cancelar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+              @if (submitting()) {
+                <mat-spinner diameter="18" style="display:inline-block;margin-right:6px;" />
+              }
+              {{ submitting() ? 'Salvando...' : 'Cadastrar Profissional' }}
+            </button>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Professionals Table -->
+  @if (loading()) {
+    <div class="table-loading">
+      <mat-spinner diameter="40" color="primary" />
+      <p>Carregando profissionais...</p>
+    </div>
+  } @else if (error()) {
+    <mat-card class="error-card">
+      <mat-icon color="warn">warning</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button (click)="loadProfessionals()">Tentar novamente</button>
+    </mat-card>
+  } @else if (professionals().length === 0) {
+    <mat-card class="empty-card">
+      <mat-icon>person_off</mat-icon>
+      <h3>Nenhum profissional cadastrado</h3>
+      <p>Clique em "Novo Profissional" para adicionar o primeiro membro da equipe.</p>
+    </mat-card>
+  } @else {
+    <table mat-table [dataSource]="professionals()" class="pros-table">
+
+      <!-- Avatar Column -->
+      <ng-container matColumnDef="avatar">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let p">
+          <div class="pro-avatar">{{ getInitials(p.fullName) }}</div>
+        </td>
+      </ng-container>
+
+      <!-- Full Name Column -->
+      <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef>Nome</th>
+        <td mat-cell *matCellDef="let p">
+          <strong>{{ p.fullName }}</strong>
+        </td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>E-mail</th>
+        <td mat-cell *matCellDef="let p">
+          <span class="email-cell">{{ p.email }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Active Column -->
+      <ng-container matColumnDef="active">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let p">
+          <span class="active-chip" [class.active]="p.active" [class.inactive]="!p.active">
+            <mat-icon>{{ p.active ? 'check_circle' : 'cancel' }}</mat-icon>
+            {{ p.active ? 'Ativo' : 'Inativo' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  }
+
+</div>

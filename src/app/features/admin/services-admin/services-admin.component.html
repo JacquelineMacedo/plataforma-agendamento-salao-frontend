@@ -1,0 +1,170 @@
+<div class="page-container admin-section">
+
+  <!-- Header -->
+  <div class="section-header">
+    <div>
+      <h2>
+        <mat-icon>content_cut</mat-icon>
+        Gestão de Serviços
+      </h2>
+      <p>Gerencie os serviços oferecidos pelo salão</p>
+    </div>
+    <div class="header-actions">
+      <a mat-stroked-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon>
+        Dashboard
+      </a>
+      <button mat-flat-button color="primary" (click)="toggleForm()">
+        <mat-icon>{{ showForm() ? 'close' : 'add' }}</mat-icon>
+        {{ showForm() ? 'Cancelar' : 'Novo Serviço' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- New Service Form -->
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>add_circle</mat-icon>
+        <mat-card-title>Novo Serviço</mat-card-title>
+        <mat-card-subtitle>Preencha os dados do novo serviço</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="service-form">
+
+          <div class="form-row-2">
+            <mat-form-field appearance="outline">
+              <mat-label>Nome do serviço</mat-label>
+              <input matInput formControlName="name" placeholder="Ex: Corte feminino">
+              <mat-icon matPrefix>content_cut</mat-icon>
+              @if (form.get('name')?.invalid && form.get('name')?.touched) {
+                <mat-error>Nome é obrigatório (mínimo 2 caracteres)</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Preço (R$)</mat-label>
+              <input matInput type="number" formControlName="price" min="0" step="0.50">
+              <mat-icon matPrefix>attach_money</mat-icon>
+              @if (form.get('price')?.invalid && form.get('price')?.touched) {
+                <mat-error>Preço inválido</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput formControlName="description" rows="2"
+              placeholder="Descreva o serviço..."></textarea>
+            <mat-icon matPrefix>description</mat-icon>
+            @if (form.get('description')?.invalid && form.get('description')?.touched) {
+              <mat-error>Descrição é obrigatória</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="form-row-2">
+            <mat-form-field appearance="outline">
+              <mat-label>Duração (minutos)</mat-label>
+              <input matInput type="number" formControlName="durationMinutes" min="5" max="480">
+              <mat-icon matPrefix>schedule</mat-icon>
+              @if (form.get('durationMinutes')?.invalid && form.get('durationMinutes')?.touched) {
+                <mat-error>Duração entre 5 e 480 minutos</mat-error>
+              }
+            </mat-form-field>
+
+            <div class="toggle-field">
+              <mat-slide-toggle formControlName="active" color="primary">
+                Serviço ativo
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="toggleForm()">Cancelar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+              @if (submitting()) {
+                <mat-spinner diameter="18" style="display:inline-block;margin-right:6px;" />
+              }
+              {{ submitting() ? 'Salvando...' : 'Salvar Serviço' }}
+            </button>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Services table -->
+  @if (loading()) {
+    <div class="table-loading">
+      <mat-spinner diameter="40" color="primary" />
+      <p>Carregando serviços...</p>
+    </div>
+  } @else if (error()) {
+    <mat-card class="error-card">
+      <mat-icon color="warn">warning</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button (click)="loadServices()">Tentar novamente</button>
+    </mat-card>
+  } @else if (services().length === 0) {
+    <mat-card class="empty-card">
+      <mat-icon>search_off</mat-icon>
+      <h3>Nenhum serviço cadastrado</h3>
+      <p>Clique em "Novo Serviço" para adicionar o primeiro serviço.</p>
+    </mat-card>
+  } @else {
+    <table mat-table [dataSource]="services()" class="services-table">
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Serviço</th>
+        <td mat-cell *matCellDef="let s">
+          <strong>{{ s.name }}</strong>
+        </td>
+      </ng-container>
+
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Descrição</th>
+        <td mat-cell *matCellDef="let s">
+          <span class="description-cell" [matTooltip]="s.description">{{ s.description }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Duration Column -->
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef>Duração</th>
+        <td mat-cell *matCellDef="let s">
+          <span class="duration-chip">
+            <mat-icon>schedule</mat-icon>
+            {{ s.durationMinutes }} min
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>Preço</th>
+        <td mat-cell *matCellDef="let s">
+          <strong class="price-cell">{{ formatPrice(s.price) }}</strong>
+        </td>
+      </ng-container>
+
+      <!-- Active Column -->
+      <ng-container matColumnDef="active">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let s">
+          <span class="active-chip" [class.active]="s.active" [class.inactive]="!s.active">
+            <mat-icon>{{ s.active ? 'check_circle' : 'cancel' }}</mat-icon>
+            {{ s.active ? 'Ativo' : 'Inativo' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  }
+
+</div>

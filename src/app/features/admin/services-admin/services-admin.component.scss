@@ -1,0 +1,106 @@
+.section-header {
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    mat-icon { color: var(--color-primary); }
+  }
+  p { margin: 0; color: var(--color-text-secondary); }
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.form-card {
+  margin-bottom: 28px;
+  border-left: 4px solid var(--color-primary) !important;
+}
+
+.service-form {
+  margin-top: 16px;
+
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    @media (max-width: 600px) { grid-template-columns: 1fr; }
+  }
+
+  mat-form-field { display: block; }
+
+  .toggle-field {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    justify-content: flex-end;
+  }
+}
+
+// Table states
+.table-loading, .empty-card, .error-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  text-align: center;
+  mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: 0.4; }
+  h3 { margin: 0; }
+  p  { margin: 0; color: var(--color-text-secondary); }
+}
+
+// Table
+.services-table {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+
+  .description-cell {
+    display: block;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .duration-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    mat-icon { font-size: 14px; width: 14px; height: 14px; }
+  }
+
+  .price-cell { color: var(--color-primary-dark); }
+
+  .active-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    mat-icon { font-size: 14px; width: 14px; height: 14px; }
+
+    &.active   { background: #e8f5e9; color: #2e7d32; }
+    &.inactive { background: #fce4ec; color: #c62828; }
+  }
+}

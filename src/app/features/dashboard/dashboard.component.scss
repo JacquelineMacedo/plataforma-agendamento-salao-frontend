@@ -1,0 +1,142 @@
+.action-btn {
+  background: rgba(255,255,255,0.25) !important;
+  color: white !important;
+  border-radius: 24px !important;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+
+  &:hover { background: rgba(255,255,255,0.35) !important; }
+
+  mat-icon { margin-right: 6px; }
+}
+
+.action-btn-outline {
+  border-color: rgba(255,255,255,0.6) !important;
+  color: white !important;
+  border-radius: 24px !important;
+
+  &:hover { background: rgba(255,255,255,0.1) !important; }
+
+  mat-icon { margin-right: 6px; }
+}
+
+// Stats row (admin)
+.stats-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    flex: 1;
+    min-width: 200px;
+
+    .stat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      color: var(--color-primary);
+      opacity: 0.8;
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .stat-label {
+        font-weight: 500;
+        font-size: 1rem;
+        color: var(--color-text-primary);
+      }
+
+      .stat-link {
+        font-size: 0.875rem;
+        color: var(--color-primary);
+      }
+    }
+  }
+}
+
+// Section title
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+
+  mat-icon {
+    color: var(--color-primary);
+    font-size: 24px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+}
+
+// States
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px;
+  color: var(--color-text-secondary);
+}
+
+.error-card, .empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 32px;
+  text-align: center;
+
+  mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: 0.5; }
+  .empty-icon { color: var(--color-primary-light); }
+  h3 { margin: 0; color: var(--color-text-primary); }
+  p  { margin: 0; color: var(--color-text-secondary); }
+}
+
+// Booking card
+.booking-card {
+  .booking-avatar {
+    background: #fce4ec;
+    color: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .booking-notes {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin: 8px 0;
+
+    mat-icon { font-size: 16px; width: 16px; height: 16px; margin-top: 2px; }
+  }
+
+  .booking-meta {
+    margin-top: 8px;
+  }
+}
+
+// View all
+.view-all-link {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+
+  a { gap: 8px; border-radius: 24px !important; }
+}

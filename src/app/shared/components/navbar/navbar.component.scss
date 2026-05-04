@@ -1,0 +1,116 @@
+:host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.navbar-toolbar {
+  height: 64px;
+  padding: 0 16px;
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: white;
+
+    .brand-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: #f8bbd0;
+    }
+
+    .brand-name {
+      font-size: 1.25rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+  }
+
+  .spacer { flex: 1 1 auto; }
+
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    a[mat-button], button[mat-button] {
+      color: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+      &:hover { background: rgba(255, 255, 255, 0.15); }
+
+      &.active-link {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+    }
+
+    .admin-menu-btn {
+      color: #f9d77e;
+    }
+  }
+
+  .user-menu-btn {
+    color: white;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+
+    mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    .user-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .desktop-nav { display: none; }
+    .user-menu-btn { display: none; }
+    .mobile-menu-btn { display: flex; }
+  }
+}
+
+// User menu content
+::ng-deep .user-menu-header {
+  padding: 12px 16px 8px;
+  pointer-events: none;
+
+  .user-full-name {
+    margin: 0;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #212121;
+  }
+
+  .user-email {
+    margin: 2px 0 6px;
+    font-size: 0.75rem;
+    color: #757575;
+  }
+
+  .role-chip {
+    display: inline-block;
+    background: #fce4ec;
+    color: #c2185b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}

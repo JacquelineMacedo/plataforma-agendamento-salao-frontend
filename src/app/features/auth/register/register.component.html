@@ -1,0 +1,113 @@
+<div class="auth-container">
+  <mat-card class="auth-card register-card">
+
+    <!-- Logo / Header -->
+    <div class="auth-logo">
+      <mat-icon class="logo-icon">spa</mat-icon>
+      <h2>Criar Conta</h2>
+      <p>Junte-se ao Salão Premium</p>
+    </div>
+
+    <!-- Error alert -->
+    @if (error()) {
+      <div class="error-alert">
+        <mat-icon>error_outline</mat-icon>
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- Full Name -->
+      <mat-form-field appearance="outline">
+        <mat-label>Nome completo</mat-label>
+        <input matInput formControlName="fullName" placeholder="Seu nome completo" autocomplete="name">
+        <mat-icon matPrefix>person</mat-icon>
+        @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+          <mat-error>
+            @if (form.get('fullName')?.errors?.['required']) { Nome é obrigatório }
+            @else if (form.get('fullName')?.errors?.['minlength']) { Mínimo 3 caracteres }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline">
+        <mat-label>E-mail</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="seu@email.com" autocomplete="email">
+        <mat-icon matPrefix>email</mat-icon>
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <mat-error>
+            @if (form.get('email')?.errors?.['required']) { E-mail é obrigatório }
+            @else if (form.get('email')?.errors?.['email']) { E-mail inválido }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Role -->
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de conta</mat-label>
+        <mat-select formControlName="role">
+          @for (role of roles; track role.value) {
+            <mat-option [value]="role.value">{{ role.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matPrefix>badge</mat-icon>
+        @if (form.get('role')?.invalid && form.get('role')?.touched) {
+          <mat-error>Selecione um tipo de conta</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input matInput [type]="hidePass() ? 'password' : 'text'" formControlName="password" autocomplete="new-password">
+        <mat-icon matPrefix>lock</mat-icon>
+        <button mat-icon-button matSuffix type="button" (click)="toggleHidePass()">
+          <mat-icon>{{ hidePass() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <mat-error>
+            @if (form.get('password')?.errors?.['required']) { Senha é obrigatória }
+            @else if (form.get('password')?.errors?.['minlength']) { Mínimo 6 caracteres }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Confirm Password -->
+      <mat-form-field appearance="outline">
+        <mat-label>Confirmar senha</mat-label>
+        <input matInput [type]="hideConfirm() ? 'password' : 'text'" formControlName="confirmPassword" autocomplete="new-password">
+        <mat-icon matPrefix>lock_outline</mat-icon>
+        <button mat-icon-button matSuffix type="button" (click)="toggleHideConfirm()">
+          <mat-icon>{{ hideConfirm() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched) {
+          <mat-error>As senhas não coincidem</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Submit -->
+      <div class="auth-actions">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="loading()">
+          @if (loading()) {
+            <mat-spinner diameter="20" style="display:inline-block; margin-right:8px;" />
+          }
+          {{ loading() ? 'Criando conta...' : 'Criar Conta' }}
+        </button>
+      </div>
+    </form>
+
+    <!-- Login link -->
+    <div class="auth-link">
+      Já tem conta?
+      <a routerLink="/login">Fazer login</a>
+    </div>
+
+  </mat-card>
+</div>

@@ -1,0 +1,11 @@
+// Inherited from global .auth-container & .auth-card styles in styles.scss
+// Component-specific tweaks only
+
+mat-form-field {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}

@@ -1,0 +1,71 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+
+    <!-- Logo / Header -->
+    <div class="auth-logo">
+      <mat-icon class="logo-icon">spa</mat-icon>
+      <h2>Salão Premium</h2>
+      <p>Faça login para continuar</p>
+    </div>
+
+    <!-- Error alert -->
+    @if (error()) {
+      <div class="error-alert">
+        <mat-icon>error_outline</mat-icon>
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <mat-form-field appearance="outline">
+        <mat-label>E-mail</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="seu@email.com" autocomplete="email">
+        <mat-icon matPrefix>email</mat-icon>
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <mat-error>
+            @if (form.get('email')?.errors?.['required']) { E-mail é obrigatório }
+            @else if (form.get('email')?.errors?.['email']) { E-mail inválido }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="mt-2">
+        <mat-label>Senha</mat-label>
+        <input matInput [type]="hidePass() ? 'password' : 'text'" formControlName="password" autocomplete="current-password">
+        <mat-icon matPrefix>lock</mat-icon>
+        <button mat-icon-button matSuffix type="button" (click)="togglePassword()">
+          <mat-icon>{{ hidePass() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <mat-error>
+            @if (form.get('password')?.errors?.['required']) { Senha é obrigatória }
+            @else if (form.get('password')?.errors?.['minlength']) { Mínimo 6 caracteres }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Submit -->
+      <div class="auth-actions">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="loading()">
+          @if (loading()) {
+            <mat-spinner diameter="20" style="display:inline-block; margin-right:8px;" />
+          }
+          {{ loading() ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </div>
+    </form>
+
+    <!-- Register link -->
+    <div class="auth-link">
+      Não tem conta?
+      <a routerLink="/register">Cadastre-se</a>
+    </div>
+
+  </mat-card>
+</div>

@@ -1,0 +1,103 @@
+<div class="page-container">
+
+  <!-- Welcome Banner -->
+  <div class="dashboard-welcome">
+    <h1>Olá, {{ firstName() }}! 👋</h1>
+    <p>Bem-vindo(a) ao Salão Premium. O que vamos fazer hoje?</p>
+
+    <div class="dashboard-actions">
+      <a mat-flat-button routerLink="/bookings/new" color="accent" class="action-btn">
+        <mat-icon>add_circle</mat-icon>
+        Novo Agendamento
+      </a>
+      <a mat-stroked-button routerLink="/bookings/my" class="action-btn-outline">
+        <mat-icon>event_note</mat-icon>
+        Meus Agendamentos
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats row (admin only) -->
+  @if (isAdmin()) {
+    <div class="stats-row">
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon">content_cut</mat-icon>
+        <div class="stat-info">
+          <span class="stat-label">Serviços</span>
+          <a routerLink="/admin/services" class="stat-link">Gerenciar</a>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon">people</mat-icon>
+        <div class="stat-info">
+          <span class="stat-label">Profissionais</span>
+          <a routerLink="/admin/professionals" class="stat-link">Gerenciar</a>
+        </div>
+      </mat-card>
+    </div>
+  }
+
+  <!-- Upcoming bookings -->
+  <div class="section-title">
+    <mat-icon>event</mat-icon>
+    <h2>Próximos Agendamentos</h2>
+  </div>
+
+  @if (loadingBkgs()) {
+    <div class="loading-state">
+      <mat-spinner diameter="40" color="primary" />
+      <p>Carregando agendamentos...</p>
+    </div>
+  } @else if (bookingError()) {
+    <mat-card class="error-card">
+      <mat-icon color="warn">warning</mat-icon>
+      <p>{{ bookingError() }}</p>
+      <button mat-stroked-button color="primary" (click)="loadBookings()">Tentar novamente</button>
+    </mat-card>
+  } @else if (upcomingBookings().length === 0) {
+    <mat-card class="empty-card">
+      <mat-icon class="empty-icon">event_busy</mat-icon>
+      <h3>Nenhum agendamento ainda</h3>
+      <p>Que tal agendar um serviço agora?</p>
+      <a mat-flat-button color="primary" routerLink="/bookings/new">
+        <mat-icon>add</mat-icon>
+        Agendar agora
+      </a>
+    </mat-card>
+  } @else {
+    <div class="card-grid">
+      @for (booking of upcomingBookings(); track booking.id) {
+        <mat-card class="booking-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="booking-avatar">event</mat-icon>
+            <mat-card-title>Agendamento</mat-card-title>
+            <mat-card-subtitle>{{ formatDate(booking.startTimeUtc) }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            @if (booking.notes) {
+              <p class="booking-notes">
+                <mat-icon>notes</mat-icon>
+                {{ booking.notes }}
+              </p>
+            }
+            <div class="booking-meta">
+              <span class="status-badge" [class]="statusClass(booking.status)">
+                {{ statusLabel(booking.status) }}
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    <div class="view-all-link">
+      <a mat-stroked-button color="primary" routerLink="/bookings/my">
+        Ver todos os agendamentos
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+  }
+
+</div>

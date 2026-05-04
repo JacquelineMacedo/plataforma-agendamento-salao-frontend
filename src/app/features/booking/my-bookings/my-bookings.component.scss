@@ -1,0 +1,121 @@
+.empty-state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 56px 32px;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: var(--color-primary-light);
+    opacity: 0.6;
+  }
+
+  h3 { margin: 0; color: var(--color-text-primary); }
+  p  { margin: 0; color: var(--color-text-secondary); }
+}
+
+// Section headings
+.bookings-section {
+  margin-bottom: 36px;
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    h3 { margin: 0; font-size: 1.1rem; font-weight: 500; }
+
+    &.upcoming mat-icon { color: var(--color-primary); }
+    &.past mat-icon     { color: var(--color-text-secondary); }
+  }
+}
+
+// Booking list
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// Booking card
+.booking-item {
+  display: flex;
+  align-items: stretch;
+  padding: 0 !important;
+  overflow: hidden;
+  border-radius: 12px !important;
+
+  .booking-date-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    padding: 16px 12px;
+    gap: 2px;
+
+    &.faded {
+      background: #e0e0e0;
+      color: #757575;
+    }
+
+    .booking-day   { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .booking-month { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+    .booking-time  { font-size: 0.875rem; margin-top: 4px; opacity: 0.9; }
+  }
+
+  .booking-info {
+    flex: 1;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .booking-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .booking-id {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      font-family: monospace;
+    }
+
+    .booking-notes {
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      margin: 0;
+
+      mat-icon { font-size: 15px; width: 15px; height: 15px; margin-top: 2px; flex-shrink: 0; }
+    }
+
+    .booking-full-date {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      margin: 0;
+
+      mat-icon { font-size: 14px; width: 14px; height: 14px; }
+    }
+  }
+
+  &.past-item {
+    opacity: 0.75;
+  }
+}

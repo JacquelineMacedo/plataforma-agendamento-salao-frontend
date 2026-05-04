@@ -1,0 +1,240 @@
+<div class="page-container booking-stepper">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="flex-row flex-between">
+      <div>
+        <h2>Novo Agendamento</h2>
+        <p>Escolha o serviço, profissional e horário desejados</p>
+      </div>
+      <a mat-stroked-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+      </a>
+    </div>
+  </div>
+
+  <mat-stepper linear #stepper>
+
+    <!-- STEP 1: Service selection -->
+    <mat-step [stepControl]="serviceForm" label="Escolha o Serviço">
+      <form [formGroup]="serviceForm">
+
+        @if (loadingSvc()) {
+          <div class="step-loading">
+            <mat-spinner diameter="40" color="primary" />
+            <p>Carregando serviços...</p>
+          </div>
+        } @else if (services().length === 0) {
+          <div class="step-empty">
+            <mat-icon>search_off</mat-icon>
+            <p>Nenhum serviço disponível no momento.</p>
+          </div>
+        } @else {
+          <div class="selection-grid">
+            @for (service of services(); track service.id) {
+              <mat-card
+                class="selection-card service-card"
+                [class.selected]="selectedService()?.id === service.id"
+                (click)="selectService(service)">
+                <mat-card-content>
+                  <div class="card-check">
+                    @if (selectedService()?.id === service.id) {
+                      <mat-icon class="check-icon">check_circle</mat-icon>
+                    }
+                  </div>
+                  <mat-icon class="service-icon">content_cut</mat-icon>
+                  <h4>{{ service.name }}</h4>
+                  <p class="service-description">{{ service.description }}</p>
+                  <div class="service-meta">
+                    <span class="duration">
+                      <mat-icon>schedule</mat-icon>
+                      {{ service.durationMinutes }} min
+                    </span>
+                    <span class="price">{{ formatPrice(service.price) }}</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+
+          @if (serviceForm.get('serviceId')?.invalid && serviceForm.touched) {
+            <p class="step-error">Selecione um serviço para continuar.</p>
+          }
+        }
+
+        <div class="step-actions">
+          <button mat-flat-button color="primary" matStepperNext [disabled]="serviceForm.invalid">
+            Próximo
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+
+      </form>
+    </mat-step>
+
+    <!-- STEP 2: Professional selection -->
+    <mat-step [stepControl]="professionalForm" label="Escolha o Profissional">
+      <form [formGroup]="professionalForm">
+
+        @if (loadingPros()) {
+          <div class="step-loading">
+            <mat-spinner diameter="40" color="primary" />
+            <p>Carregando profissionais...</p>
+          </div>
+        } @else if (professionals().length === 0) {
+          <div class="step-empty">
+            <mat-icon>person_off</mat-icon>
+            <p>Nenhum profissional disponível no momento.</p>
+          </div>
+        } @else {
+          <div class="selection-grid">
+            @for (pro of professionals(); track pro.id) {
+              <mat-card
+                class="selection-card professional-card"
+                [class.selected]="selectedProfessional()?.id === pro.id"
+                (click)="selectProfessional(pro)">
+                <mat-card-content>
+                  <div class="card-check">
+                    @if (selectedProfessional()?.id === pro.id) {
+                      <mat-icon class="check-icon">check_circle</mat-icon>
+                    }
+                  </div>
+                  <div class="pro-avatar">
+                    {{ pro.fullName.charAt(0).toUpperCase() }}
+                  </div>
+                  <h4>{{ pro.fullName }}</h4>
+                  <p class="pro-email">{{ pro.email }}</p>
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+
+          @if (professionalForm.get('professionalId')?.invalid && professionalForm.touched) {
+            <p class="step-error">Selecione um profissional para continuar.</p>
+          }
+        }
+
+        <div class="step-actions">
+          <button mat-stroked-button matStepperPrevious>
+            <mat-icon>arrow_back</mat-icon>
+            Anterior
+          </button>
+          <button mat-flat-button color="primary" matStepperNext [disabled]="professionalForm.invalid">
+            Próximo
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+
+      </form>
+    </mat-step>
+
+    <!-- STEP 3: Date & Time -->
+    <mat-step [stepControl]="dateTimeForm" label="Data e Horário">
+      <form [formGroup]="dateTimeForm">
+        <div class="datetime-grid">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date" [min]="minDate" readonly>
+            <mat-datepicker-toggle matIconSuffix [for]="picker" />
+            <mat-datepicker #picker />
+            @if (dateTimeForm.get('date')?.invalid && dateTimeForm.get('date')?.touched) {
+              <mat-error>Selecione uma data</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Horário</mat-label>
+            <mat-select formControlName="timeSlot">
+              @for (slot of timeSlots; track slot) {
+                <mat-option [value]="slot">{{ slot }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>schedule</mat-icon>
+            @if (dateTimeForm.get('timeSlot')?.invalid && dateTimeForm.get('timeSlot')?.touched) {
+              <mat-error>Selecione um horário</mat-error>
+            }
+          </mat-form-field>
+
+        </div>
+
+        <!-- Summary -->
+        @if (selectedService() && selectedProfessional()) {
+          <mat-card class="summary-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>receipt_long</mat-icon>
+              <mat-card-title>Resumo do Agendamento</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-row">
+                <mat-icon>content_cut</mat-icon>
+                <span><strong>Serviço:</strong> {{ selectedService()?.name }}</span>
+              </div>
+              <div class="summary-row">
+                <mat-icon>person</mat-icon>
+                <span><strong>Profissional:</strong> {{ selectedProfessional()?.fullName }}</span>
+              </div>
+              <div class="summary-row">
+                <mat-icon>attach_money</mat-icon>
+                <span><strong>Valor:</strong> {{ formatPrice(selectedService()?.price ?? 0) }}</span>
+              </div>
+              <div class="summary-row">
+                <mat-icon>schedule</mat-icon>
+                <span><strong>Duração:</strong> {{ selectedService()?.durationMinutes }} minutos</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+
+        <div class="step-actions">
+          <button mat-stroked-button matStepperPrevious>
+            <mat-icon>arrow_back</mat-icon>
+            Anterior
+          </button>
+          <button mat-flat-button color="primary" matStepperNext [disabled]="dateTimeForm.invalid">
+            Próximo
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+
+      </form>
+    </mat-step>
+
+    <!-- STEP 4: Observações e confirmar -->
+    <mat-step label="Confirmar">
+      <form [formGroup]="notesForm">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Observações (opcional)</mat-label>
+          <textarea matInput formControlName="notes" rows="3"
+            placeholder="Ex: Tenho alergia a tintas específicas..."></textarea>
+          <mat-icon matPrefix>notes</mat-icon>
+        </mat-form-field>
+
+        <div class="step-actions">
+          <button mat-stroked-button matStepperPrevious>
+            <mat-icon>arrow_back</mat-icon>
+            Anterior
+          </button>
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="onSubmit()"
+            [disabled]="submitting() || serviceForm.invalid || professionalForm.invalid || dateTimeForm.invalid">
+            @if (submitting()) {
+              <mat-spinner diameter="20" style="display:inline-block; margin-right:8px;" />
+            }
+            {{ submitting() ? 'Confirmando...' : 'Confirmar Agendamento' }}
+            @if (!submitting()) {
+              <mat-icon>check_circle</mat-icon>
+            }
+          </button>
+        </div>
+
+      </form>
+    </mat-step>
+
+  </mat-stepper>
+
+</div>
